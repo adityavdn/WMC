@@ -1,0 +1,66 @@
+Expt_2
+
+clc; clear all; close all;
+N=10; % Number of bits
+bk = round(rand (1,N));
+f=10^6;
+T=1/f;
+
+%Display info bits
+grid on;
+subplot (4,1,1);
+stem (bk,'linewidth',1.5);
+title ('Information bits to be transmitted');
+axis([0 11 0 1.5]);
+
+%Differential encoding
+dk=1;
+coded=dk;
+for i=1:length(bk)
+    temp=~xor (dk,bk(i));
+    coded=[coded temp] ;
+    dk=temp;
+end
+
+%Display endoded info
+subplot (4,1,2);
+stem (coded, 'linewidth',1.5);
+grid on;
+title('Differentially encoded signal');
+axis([0 11 0 1.5]);
+
+%DPSK modulation of endoded bit stream coded 
+coded_PNRZ=2*coded-1;
+mod_sig=[];
+t=T/99:T/99:T;
+for i=1:length(coded)
+    temp=coded_PNRZ(i)*sqrt (2/T)*cos (2*pi*f*t);
+    mod_sig=[mod_sig temp];
+end
+
+%Plot DPSK modulated signal
+subplot (4,1,3);
+tt=T/99:T/99: (T*length (coded));
+plot(tt,mod_sig,'linewidth',1.5);
+title('DPSK Modulated Signal');
+grid on;
+
+%Non-Coherent detection of DPSK signal
+rec_sig=mod_sig;
+rec_data=[];
+for i=1:length(coded)-1
+    y_in= rec_sig((i-1)*length(t) + 1:i*length(t)).*rec_sig((i)*length(t)+1:(i+1)*length(t));
+    y_in_intg=trapz(t,y_in);
+    if (y_in_intg>0)
+        temp=1;
+    else
+        temp=0;
+    end
+    rec_data=[rec_data temp];
+end
+
+%Display demodulated data
+subplot (4,1,4);
+stem(rec_data,'linewidth',3);
+title('Received information bits');
+axis([0 11 0 1.5]);

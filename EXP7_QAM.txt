@@ -1,0 +1,72 @@
+Expt_7
+
+clc;clear all; close all;
+M=8;N=12;nb=100;
+msg=round(rand(1,N));
+disp('Binary Input at the Transmitter');
+disp(msg);
+Tb=0.000001;
+
+x=msg;
+bits=[];
+for i=1:1:length(x);
+    if(x(i)==1);
+        sig=ones(1,nb);
+    else(x(i)==0);
+        sig=zeros(1,nb);
+    end
+    bits=[bits sig];
+end
+t1=Tb/nb:Tb/nb:nb*length(x)*(Tb/nb);
+
+subplot(3,1,1);
+plot(t1,bits);
+grid on;
+axis([0 Tb*length(x) -0.5 1.5]);
+title('Digital Input Signal');
+
+msgreshape=reshape(x,log2(M),N/log2(M))';
+disp('Information is reshaped to convert into symbol form: ');
+disp(msgreshape);
+fprintf('\n\n');
+size(msgreshape);
+
+for j=1:1:N/log2(M);
+    for i=1:1:log2(M);
+        a(j,i)=num2str(msgreshape(j,i));
+    end
+end
+as=bin2dec(a);
+ast=as';
+
+subplot(3,1,2);
+stem(ast);
+title('Serial Symbol');
+disp('Symbol form of information for 8-QAM');
+disp(ast);
+fprintf('\n\n');
+
+p=qammod(ast,M);
+scatterplot(p);grid on;
+title('8-QAM Constellation Diagram');
+
+RR=real(p);
+II=imag(p);
+sp=Tb*2;
+sr=1/sp;
+f=sr*2;
+t=sp/nb:sp/nb:sp;
+ss=length(t);
+m=[];
+for k=1:1:length(RR);
+    yr=RR(k)*cos(2*pi*f*t);
+    yim=II(k)*sin(2*pi*f*t);
+    y=yr+yim;
+    m=[m y];
+end
+
+tt=sp/nb:sp/nb:sp*length(RR);
+figure(1);
+subplot(3,1,3);
+plot(tt,m);
+title('8-QAM Modulated Signal');

@@ -1,0 +1,71 @@
+Expt_3
+
+clc;clear all;close all;
+
+%Bits to be transmitted
+N=8; %Number of bits
+b = round (rand(1,N));
+subplot (4,1,1);
+stem(b, 'filled')
+xlabel ('Bit index')
+ylabel ('Transmitted bits')
+
+%Vp - peak voltage of Bipolar NRZ waveform
+Vp=1; 
+%Encode input , bitstream as Bipolar NRZ waveform
+NRZ_out=[];
+for i=1:size(b,2)
+    if b(i)==1
+        NRZ_out=[NRZ_out ones(1,200)*Vp];
+    elseif b(i)==0
+        NRZ_out= [NRZ_out zeros(1,200)*(-Vp)];
+    end
+end
+
+%Plot input signal
+subplot (4,1,2);
+plot (NRZ_out)
+
+%BFSK modulation
+t=0.005:0.005:8;
+f1=3;
+f2=5;
+A=5; %Carrier amplitude
+mod_sig=[];
+for (i=1:1:length(NRZ_out))
+    if (NRZ_out(i)==1)
+        y=A*cos(2*pi*f1*t(i));
+    else
+        y=A*cos(2*pi*f2*t(i));
+    end
+    mod_sig =[mod_sig y];
+end
+
+%Plot the modulated signal
+subplot (4,1,3);
+plot(t,mod_sig)
+xlabel ('Time in seconds')
+ylabel ('Modulated Signal')
+
+%Demodulation
+demod_branch_1=mod_sig.*(cos (2*pi*f1*t));
+demod_branch_2=mod_sig.*(cos(2*pi*f2*t));
+
+%Integration (LPF operation)
+y_1=[];
+for i=1:200:size(demod_branch_1, 2)
+y_1=[y_1 trapz(t(i:i+199),demod_branch_1 (i:i+199))];
+end
+y_2=[];
+for i=1:200:size(demod_branch_2 ,2)
+y_2=[y_2 trapz(t(i:i+199),demod_branch_2 (i:i+199))];
+end
+
+% Decision making
+rec_sig=y_1>y_2;
+
+%Plot recovered bits
+subplot (4,1,4);
+stem (rec_sig, 'filled','r')
+xlabel(' Bit index')
+ylabel(' Received bits')
