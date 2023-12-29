@@ -1,0 +1,42 @@
+SIM DETECTION
+
+AT  -  Test Command
+AT+CPIN?  -  Request the  PIN registration status of the SIM
+AT+CREG?  -  Request registration status of the SIM
+AT+CMEE=1  -  Error Log View
+AT+COPS=?  -  View the different operators available
+AT+COPS?  -  view the service operator
+
+
+PHONE CONTROL COMMANDS
+AT  -  Test  Command
+AT+CGMI  -  request manufacturer identification 
+AT+CGMM  -  request model identification
+AT+CGMR  -  request revision identification
+AT+CGSN  -  request  product serial number identification
+AT+CSQ  -  Signal Quality
+AT+CPAS  -  Phone activity status
+
+
+CELL MAKING AND RECIEVING COMMANDS
+AT  -  test command
+ATD+91Number;  -  dial a number
+ATA  -  answer a call
+AT+CLIP=1  -  show the callers number
+ATA  -  answer a call
+AT+CLIP=0  -  hide the callers number
+ATA  -  answer a call
+ATH  -  hang a call
+AT+CRC  -  cellular result codes
+
+
+SENDING AND RECIEVING MESSAGES
+AT  -  test command
+AT+CMGF=1  -  Enter the SMS mode(0:pdu and 1:text mode)
+AT+CMGS="+91Number"  
+>Type a number and press Ctrl+z
+AT+CMGW="Phone Number"
+>Message to be stored and press Ctrl+z
+AT+CMGD  -  delete the message 
+AT+CMGR  -  read the message 
+AT+CMGL  -  list the message
